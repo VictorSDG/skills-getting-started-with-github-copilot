@@ -80,6 +80,18 @@ activities = {
     }
 }
 
+from fastapi import status
+# Remove participant from activity
+@app.delete("/activities/{activity_name}/participants/{email}", status_code=status.HTTP_204_NO_CONTENT)
+def remove_participant(activity_name: str, email: str):
+    """Remove a participant from an activity"""
+    if activity_name not in activities:
+        raise HTTPException(status_code=404, detail="Activity not found")
+    activity = activities[activity_name]
+    if email not in activity["participants"]:
+        raise HTTPException(status_code=404, detail="Participant not found in activity")
+    activity["participants"].remove(email)
+    return
 
 @app.get("/")
 def root():
